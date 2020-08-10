@@ -108,9 +108,11 @@ void http_request::parse_body_(const std::string& line) {
     LOG_DEBUG("Body:%s, len:%d", line.c_str(), line.size());
 }
 
-int http_request::convert_to_hex(char ch) {
-    if(ch >= 'A' && ch <= 'F') return ch -'A' + 10;
-    if(ch >= 'a' && ch <= 'f') return ch -'a' + 10;
+int http_request::convert_from_hex(char ch) {
+    if(ch >= 'A' && ch <= 'F') 
+        return ch -'A' + 10;
+    if(ch >= 'a' && ch <= 'f') 
+        return ch -'a' + 10;
     return ch;
 }
 
@@ -150,10 +152,13 @@ void http_request::parse_post_() {
     if(method_ == "POST" && header_["Content-Type"] == "application/x-www-form-urlencoded") {
         parse_from_url_encoded_();
     }   
+
 }
 
 void http_request::parse_from_url_encoded_() {
-    if(body_.size() == 0) { return; }
+    if(body_.size() == 0) { 
+        return; 
+    }
 
     std::string key, value;
     int num = 0;
@@ -163,27 +168,27 @@ void http_request::parse_from_url_encoded_() {
     for(; i < n; i++) {
         char ch = body_[i];
         switch (ch) {
-        case '=':
-            key = body_.substr(j, i - j);
-            j = i + 1;
-            break;
-        case '+':
-            body_[i] = ' ';
-            break;
-        case '%':
-            num = convert_to_hex(body_[i + 1]) * 16 + convert_to_hex(body_[i + 2]);
-            body_[i + 2] = num % 10 + '0';
-            body_[i + 1] = num / 10 + '0';
-            i += 2;
-            break;
-        case '&':
-            value = body_.substr(j, i - j);
-            j = i + 1;
-            post_[key] = value;
-            LOG_DEBUG("%s = %s", key.c_str(), value.c_str());
-            break;
-        default:
-            break;
+            case '=':
+                key = body_.substr(j, i - j);
+                j = i + 1;
+                break;
+            case '+':
+                body_[i] = ' ';
+                break;
+            case '%':
+                num = convert_from_hex(body_[i + 1]) * 16 + convert_from_hex(body_[i + 2]);
+                body_[i + 2] = num % 10 + '0';
+                body_[i + 1] = num / 10 + '0';
+                i += 2;
+                break;
+            case '&':
+                value = body_.substr(j, i - j);
+                j = i + 1;
+                post_[key] = value;
+                LOG_DEBUG("%s = %s", key.c_str(), value.c_str());
+                break;
+            default:
+                break;
         }
     }
     assert(j <= i);

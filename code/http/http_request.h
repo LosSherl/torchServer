@@ -61,7 +61,7 @@ private:
 
     static const std::unordered_set<std::string> DEFAULT_HTML;
     static const std::unordered_map<std::string, int> DEFAULT_HTML_TAG;
-    static int convert_to_hex(char ch);
+    static int convert_from_hex(char ch);
 };
 
 
