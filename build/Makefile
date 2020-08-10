@@ -12,8 +12,7 @@ all: $(OBJS)
 client: ../code/client/*.cpp 
 	$(CXX) $(CFLAGS) ../code/client/*.cpp -o ../bin/client
 
-clean:
-	rm -rf ../bin/$(OBJS) $(TARGET)
+
 
 
 

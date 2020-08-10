@@ -134,6 +134,7 @@ void server::add_client_(int fd, sockaddr_in addr) {
     }
     epoller_->add_fd(fd, EPOLLIN | conn_event_);
     set_fd_nonblock(fd);
+    write(pipe_fd_[1], "1", strlen("new client"));
     LOG_INFO("%s: Client[%d] in! total connection cnt: %d", name_, fd, total_cnt_);
 }
 
