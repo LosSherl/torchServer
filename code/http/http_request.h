@@ -8,6 +8,8 @@
 #include <errno.h>     
 
 #include "../buffer/buffer.h"
+#include "../pool/sql_conn_pool.h"
+#include "../pool/sql_conn_RAII.h"
 #include "../log/log.h"
 
 class http_request {
@@ -54,6 +56,8 @@ private:
     void parse_post_();
     void parse_from_url_encoded_();
 
+    bool verify(const std::string& username, const std::string& pwd, bool log_in);
+
     PARSE_STATE state_;
     std::string method_, path_, version_, body_;
     std::unordered_map<std::string, std::string> header_;
@@ -61,7 +65,6 @@ private:
 
     static const std::unordered_set<std::string> DEFAULT_HTML;
     static const std::unordered_map<std::string, int> DEFAULT_HTML_TAG;
-    static int convert_from_hex(char ch);
 };
 
 

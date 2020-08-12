@@ -12,6 +12,8 @@
 
 #include "epoller.h"
 #include "../log/log.h"
+#include "../pool/sql_conn_pool.h"
+#include "../pool/sql_conn_RAII.h"
 #include "../timer/timer_heap.h"
 #include "../pool/thread_pool.h"
 #include "../http/http_conn.h"
@@ -20,6 +22,7 @@ class server {
 public:
     server(
         int port, int trig_mode, int timeout_ms, bool linger, int thread_num,
+            int sql_port, const char* sql_user, const char* sql_pwd, const char* db_name, int sql_conn_num,
             bool open_log, int log_level, int log_que_size, const std::string& name);
 
     ~server();

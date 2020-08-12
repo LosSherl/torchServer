@@ -10,6 +10,7 @@ using namespace std;
 
 server::server(
             int port, int trig_mode, int timeout_ms, bool opt_linger,  int thread_num,
+            int sql_port, const char* sql_user, const char* sql_pwd, const char* db_name, int sql_conn_num,
             bool open_log, int log_level, int log_que_size, const std::string& name):
             port_(port), linger_(opt_linger), timeout_ms_(timeout_ms), is_closed_(false), 
             timer_(new timer_heap()), thread_pool_(new thread_pool(thread_num)), epoller_(new epoller()) {
@@ -21,6 +22,8 @@ server::server(
     http_conn::user_cnt = 0;
     http_conn::src_dir = src_dir_;
     
+    sql_conn_pool::instance()->init("localhost", sql_port, sql_user, sql_pwd, db_name, sql_conn_num);
+
     init_event_mode_(trig_mode);
     if(!init_socket_()) { 
         is_closed_ = true;
@@ -38,7 +41,7 @@ server::server(
                             (conn_event_ & EPOLLET ? "ET": "LT"));
             LOG_INFO("%s: LogSys level: %d", name_, log_level);
             LOG_INFO("%s: src_dir: %s", name_, http_conn::src_dir);
-            LOG_INFO("%s: ThreadPool num: %d", name_, thread_num);
+            LOG_INFO("%s: ThreadPool num: %d, SQLPool num :%d", name_, thread_num, sql_conn_num);
         }
     }
 }
@@ -134,7 +137,6 @@ void server::add_client_(int fd, sockaddr_in addr) {
     }
     epoller_->add_fd(fd, EPOLLIN | conn_event_);
     set_fd_nonblock(fd);
-    write(pipe_fd_[1], "1", strlen("new client"));
     LOG_INFO("%s: Client[%d] in! total connection cnt: %d", name_, fd, total_cnt_);
 }
 

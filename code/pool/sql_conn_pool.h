@@ -2,7 +2,10 @@
 #define SQL_CONN_POOL_H
 
 #include <mysql/mysql.h>
+#include <queue>
 
+
+#include "../log/log.h"
 
 class sql_conn_pool {
 public:
@@ -18,9 +21,15 @@ public:
     void close_pool();
 
 private:
-    sql_conn_pool();
+    sql_conn_pool() = default;
     ~sql_conn_pool();
-}
+
+    int MAX_CONN_;
+
+    std::mutex mtx_;
+    std::queue<MYSQL*> conn_queue_;
+    std::condition_variable cond_;
+};
 
 
 #endif

@@ -1,0 +1,4 @@
+./bin
+./.vscode
+./webbench/webbench
+./webbench/webbench.o

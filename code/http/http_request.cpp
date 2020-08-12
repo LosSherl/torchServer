@@ -108,36 +108,6 @@ void http_request::parse_body_(const std::string& line) {
     LOG_DEBUG("Body:%s, len:%d", line.c_str(), line.size());
 }
 
-int http_request::convert_from_hex(char ch) {
-    if(ch >= 'A' && ch <= 'F') 
-        return ch -'A' + 10;
-    if(ch >= 'a' && ch <= 'f') 
-        return ch -'a' + 10;
-    return ch;
-}
-
-std::string http_request::path() const{
-    return path_;
-}
-
-std::string& http_request::path(){
-    return path_;
-}
-std::string http_request::method() const {
-    return method_;
-}
-
-std::string http_request::version() const {
-    return version_;
-}
-
-// std::string http_request::get_post(const char* key) const {
-//     assert(key != nullptr);
-//     if(post_.count(key) == 1) {
-//         return post_.find(key)->second;
-//     }
-//     return "";
-// }
 
 std::string http_request::get_post(const std::string& key) const {
     assert(key != "");
@@ -151,7 +121,73 @@ std::string http_request::get_post(const std::string& key) const {
 void http_request::parse_post_() {
     if(method_ == "POST" && header_["Content-Type"] == "application/x-www-form-urlencoded") {
         parse_from_url_encoded_();
+        if(DEFAULT_HTML_TAG.count(path_)) {
+            int tag = DEFAULT_HTML_TAG.find(path_)->second;
+            LOG_DEBUG("Tag: %d", tag);
+            if(tag == 0 || tag == 1) {
+                bool log_in = tag == 1;
+                if(verify(post_["username"], post_["password"], log_in)) {
+                    path_ = "welcome.html";
+                }
+                else {
+                    path_ = "/error.html";
+                }
+            }
+        }
     }   
+
+}
+
+bool verify(const std::string& username, const std::string& pwd, bool log_in) {
+    if(username == "" || pwd == "")
+        return false;
+    LOG_INFO("To verify, username: %s, password: %s", username.c_str(), pwd.c_str());
+
+    MYSQL* sql;
+    sql_conn_RAII(&sql, sql_conn_pool::instance());
+    assert(sql);
+
+    MYSQL_FIELD* fields = nullptr;
+    MYSQL_RES* res = nullptr;
+
+    std::string query = "ELECT username, password FROM user WHERE username=" + username +  "LIMIT 1";
+    LOG_DEBUG("%s", query.c_str());
+
+    if(mysql_query(sql, query.c_str()) != 0) {
+        mysql_free_result(res);
+        return false;
+    }
+
+    res = mysql_store_result(sql);
+    int num_fields = mysql_num_fields(res);
+    fields = mysql_fetch_fields(res);
+    bool err = false;
+    if(MYSQL_ROW row = mysql_fetch_row(res)) {
+        LOG_DEBUG("Mysql row: %s %s", row[0], row[1]);
+        if(log_in) {
+            if(pwd != row[1]) {
+                LOG_DEBUG("password incorrect!");
+                err = true;
+            }
+        }
+        else {
+            err = true;
+        }
+    }
+    mysql_free_result(res);
+    if(log_in == false && err == false) {
+        // 注册
+        LOG_DEBUG("register");
+        query = "INSERT INTO user(username, password) VALUES('" + username + "', '" + pwd + "')";
+        LOG_DEBUG("%s", query.c_str());
+        if(mysql_query(sql, query.c_str()) != 0) {
+            LOG_DEBUG("Insert Error!");
+            err = true;
+        }
+    }
+    sql_conn_pool::instance()->free_conn(sql);
+
+    return err == false;
 
 }
 
@@ -172,15 +208,6 @@ void http_request::parse_from_url_encoded_() {
                 key = body_.substr(j, i - j);
                 j = i + 1;
                 break;
-            case '+':
-                body_[i] = ' ';
-                break;
-            case '%':
-                num = convert_from_hex(body_[i + 1]) * 16 + convert_from_hex(body_[i + 2]);
-                body_[i + 2] = num % 10 + '0';
-                body_[i + 1] = num / 10 + '0';
-                i += 2;
-                break;
             case '&':
                 value = body_.substr(j, i - j);
                 j = i + 1;
@@ -196,4 +223,19 @@ void http_request::parse_from_url_encoded_() {
         value = body_.substr(j, i - j);
         post_[key] = value;
     }
+}
+
+std::string http_request::path() const{
+    return path_;
+}
+
+std::string& http_request::path(){
+    return path_;
+}
+std::string http_request::method() const {
+    return method_;
+}
+
+std::string http_request::version() const {
+    return version_;
 }
