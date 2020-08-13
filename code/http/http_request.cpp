@@ -150,7 +150,7 @@ bool http_request::verify_user_(const std::string& username, const std::string& 
     // MYSQL_FIELD* fields = nullptr;
     MYSQL_RES* res = nullptr;
 
-    std::string query = "ELECT username, password FROM user WHERE username=" + username +  " LIMIT 1";
+    std::string query = "SELECT username, password FROM user WHERE username=" + username +  " LIMIT 1";
     LOG_DEBUG("%s", query.c_str());
 
     if(mysql_query(sql, query.c_str()) != 0) {

@@ -1,0 +1,40 @@
+2020-08-13 13:59:51.120060 [info] : Node: ========== Server init ==========
+2020-08-13 13:59:51.120086 [info] : Node: Port:1316, Linger: false
+2020-08-13 13:59:51.120172 [info] : Node: Listen Mode: ET, Connection Mode: ET
+2020-08-13 13:59:51.120181 [info] : Node: LogSys level: 0
+2020-08-13 13:59:51.120232 [info] : Node: src_dir: /code/cl/cpp-dev/torchServer/resources
+2020-08-13 13:59:51.120240 [info] : Node: ThreadPool num: 6, SQLPool num :12
+2020-08-13 13:59:51.120246 [info] : Node: ========== Server start ==========
+2020-08-13 13:59:59.241232 [info] : Client[6](223.3.86.133:12983) in, userCount:1
+2020-08-13 13:59:59.241427 [info] : Node: Client[6] in! total connection cnt: 1
+2020-08-13 13:59:59.241475 [info] : Client[7](223.3.86.133:12984) in, userCount:2
+2020-08-13 13:59:59.241505 [info] : Node: Client[7] in! total connection cnt: 2
+2020-08-13 13:59:59.243394 [debug]: [GET], [/index.html], [1.1]
+2020-08-13 13:59:59.243468 [debug]: /index.html
+2020-08-13 13:59:59.243546 [debug]: file path /code/cl/cpp-dev/torchServer/resources/index.html
+2020-08-13 13:59:59.243602 [debug]: filesize:443, 2  to 559
+2020-08-13 13:59:59.243772 [debug]: Node: keepAlive!
+2020-08-13 14:00:04.245776 [info] : Node: Client[7] quit!
+2020-08-13 14:00:04.245976 [info] : Client[7](223.3.86.133:12984) quit, UserCount:1
+2020-08-13 14:00:04.246361 [info] : Node: Client[6] quit!
+2020-08-13 14:00:04.246464 [info] : Client[6](223.3.86.133:12983) quit, UserCount:0
+2020-08-13 14:00:04.705355 [info] : Client[6](223.3.86.133:12989) in, userCount:1
+2020-08-13 14:00:04.705482 [info] : Node: Client[6] in! total connection cnt: 3
+2020-08-13 14:00:04.705514 [info] : Client[7](223.3.86.133:12988) in, userCount:2
+2020-08-13 14:00:04.705543 [info] : Node: Client[7] in! total connection cnt: 4
+2020-08-13 14:00:04.707561 [debug]: [GET], [/register.html], [1.1]
+2020-08-13 14:00:04.707609 [debug]: /register.html
+2020-08-13 14:00:04.707702 [debug]: file path /code/cl/cpp-dev/torchServer/resources/register.html
+2020-08-13 14:00:04.707745 [debug]: filesize:715, 2  to 831
+2020-08-13 14:00:04.707843 [debug]: Node: keepAlive!
+2020-08-13 14:00:09.709868 [info] : Node: Client[7] quit!
+2020-08-13 14:00:09.710059 [info] : Client[7](223.3.86.133:12988) quit, UserCount:1
+2020-08-13 14:00:09.710527 [info] : Node: Client[6] quit!
+2020-08-13 14:00:09.710610 [info] : Client[6](223.3.86.133:12989) quit, UserCount:0
+2020-08-13 14:00:13.258968 [info] : Client[6](223.3.86.133:12993) in, userCount:1
+2020-08-13 14:00:13.259100 [info] : Node: Client[6] in! total connection cnt: 5
+2020-08-13 14:00:13.259227 [info] : Client[7](223.3.86.133:12994) in, userCount:2
+2020-08-13 14:00:13.259300 [info] : Node: Client[7] in! total connection cnt: 6
+2020-08-13 14:00:13.262017 [debug]: username = 12
+2020-08-13 14:00:13.262086 [debug]: Tag: 0
+2020-08-13 14:00:13.262110 [info] : To verify, username: 12, password: 1

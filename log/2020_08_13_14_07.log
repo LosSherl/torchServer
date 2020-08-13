@@ -1,0 +1,19 @@
+2020-08-13 14:07:52.147677 [info] : Node: ========== Server init ==========
+2020-08-13 14:07:52.147717 [info] : Node: Port:1316, Linger: false
+2020-08-13 14:07:52.147786 [info] : Node: Listen Mode: ET, Connection Mode: ET
+2020-08-13 14:07:52.147865 [info] : Node: LogSys level: 0
+2020-08-13 14:07:52.147897 [info] : Node: src_dir: /code/cl/cpp-dev/torchServer/resources
+2020-08-13 14:07:52.147925 [info] : Node: ThreadPool num: 6, SQLPool num :12
+2020-08-13 14:07:52.147954 [info] : Node: ========== Server start ==========
+2020-08-13 14:07:54.602241 [info] : Client[6](223.3.86.133:13267) in, userCount:1
+2020-08-13 14:07:54.602377 [info] : Node: Client[6] in! total connection cnt: 1
+2020-08-13 14:07:54.603220 [info] : Client[7](223.3.86.133:13268) in, userCount:2
+2020-08-13 14:07:54.603278 [info] : Node: Client[7] in! total connection cnt: 2
+2020-08-13 14:07:54.605503 [debug]: [GET], [/login.html], [1.1]
+2020-08-13 14:07:54.605585 [debug]: /login.html
+2020-08-13 14:07:54.605675 [debug]: file path /code/cl/cpp-dev/torchServer/resources/login.html
+2020-08-13 14:07:54.605723 [debug]: filesize:712, 2  to 828
+2020-08-13 14:07:54.605906 [debug]: Node: keepAlive!
+2020-08-13 14:07:58.132600 [debug]: username = 1
+2020-08-13 14:07:58.132695 [debug]: Tag: 1
+2020-08-13 14:07:58.132708 [info] : To verify, username: 1, password: 1
