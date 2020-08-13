@@ -56,7 +56,7 @@ private:
     void parse_post_();
     void parse_from_url_encoded_();
 
-    bool verify(const std::string& username, const std::string& pwd, bool log_in);
+    bool verify_user_(const std::string& username, const std::string& pwd, bool log_in);
 
     PARSE_STATE state_;
     std::string method_, path_, version_, body_;

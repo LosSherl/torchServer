@@ -126,8 +126,8 @@ void http_request::parse_post_() {
             LOG_DEBUG("Tag: %d", tag);
             if(tag == 0 || tag == 1) {
                 bool log_in = tag == 1;
-                if(verify(post_["username"], post_["password"], log_in)) {
-                    path_ = "welcome.html";
+                if(verify_user_(post_["username"], post_["password"], log_in)) {
+                    path_ = "/welcome.html";
                 }
                 else {
                     path_ = "/error.html";
@@ -138,7 +138,7 @@ void http_request::parse_post_() {
 
 }
 
-bool verify(const std::string& username, const std::string& pwd, bool log_in) {
+bool http_request::verify_user_(const std::string& username, const std::string& pwd, bool log_in) {
     if(username == "" || pwd == "")
         return false;
     LOG_INFO("To verify, username: %s, password: %s", username.c_str(), pwd.c_str());
@@ -147,7 +147,7 @@ bool verify(const std::string& username, const std::string& pwd, bool log_in) {
     sql_conn_RAII(&sql, sql_conn_pool::instance());
     assert(sql);
 
-    MYSQL_FIELD* fields = nullptr;
+    // MYSQL_FIELD* fields = nullptr;
     MYSQL_RES* res = nullptr;
 
     std::string query = "ELECT username, password FROM user WHERE username=" + username +  "LIMIT 1";
@@ -159,8 +159,8 @@ bool verify(const std::string& username, const std::string& pwd, bool log_in) {
     }
 
     res = mysql_store_result(sql);
-    int num_fields = mysql_num_fields(res);
-    fields = mysql_fetch_fields(res);
+    // int num_fields = mysql_num_fields(res);
+    // fields = mysql_fetch_fields(res);
     bool err = false;
     if(MYSQL_ROW row = mysql_fetch_row(res)) {
         LOG_DEBUG("Mysql row: %s %s", row[0], row[1]);
@@ -197,7 +197,6 @@ void http_request::parse_from_url_encoded_() {
     }
 
     std::string key, value;
-    int num = 0;
     int n = body_.size();
     int i = 0, j = 0;
 

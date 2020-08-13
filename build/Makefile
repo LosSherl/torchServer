@@ -3,11 +3,11 @@ CFLAGS = -std=c++14 -O2 -Wall -g
 
 TARGET = server
 OBJS = ../code/log/*.cpp ../code/timer/*.cpp \
-       ../code/http/*.cpp ../code/server/*.cpp \
+       ../code/http/*.cpp ../code/server/*.cpp ../code/pool/*.cpp \
        ../code/buffer/*.cpp ../code/main.cpp
 
 all: $(OBJS)
-	$(CXX) $(CFLAGS) $(OBJS) -o ../bin/$(TARGET)  -pthread 
+	$(CXX) $(CFLAGS) $(OBJS) -o ../bin/$(TARGET)  -pthread -lmysqlclient
 
 client: ../code/client/*.cpp 
 	$(CXX) $(CFLAGS) ../code/client/*.cpp -o ../bin/client
