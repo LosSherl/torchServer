@@ -1,5 +1,5 @@
-./bin
-./.vscode
-./webbench/webbench
-./webbench/webbench.o
-./log/*
+/bin
+/.vscode
+/webbench/webbench
+/webbench/webbench.o
+/log/*
