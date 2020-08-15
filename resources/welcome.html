@@ -1,14 +1,69 @@
+
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>WebServer Main Page</title>
-    </head>
-    <body>
-        <br/>
-        <br/>
-        <div align="center"><font size="5"> <strong>主页</strong></font></div>
-        <br/>
-        <br/>
-    </body>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+</head>
+
+<body>
+    <form action="/result" class="fileForm picUpload" enctype="multipart/form-data" method="post">
+        <input type="file" id="uploadPic" name="file">
+        <label for="uploadPic" id="fileBtn">
+        <img class="showPic" src="" />
+        </label>
+        <span class="tip">请上传图片，大小在2M以内<br/>(图片类型可为jpg,jepg,png,gif,bmp)<br/>推荐图片比例为448*448</span>
+        <input type="text" name="turnUrl" class="turnUrl" style="display:none">
+        <input type="submit" value="submit" style="display:none">
+    </form>
+    <canvas id="uploadImg" style="display:none"></canvas>
+    <script>
+    $(".turnUrl").val(window.location.pathname);
+    $("#uploadPic").on('change', function(event) {
+        event.preventDefault();
+        console.log($(this)[0].files);
+        var file = $(this)[0].files[0];
+        if(file.size>2097152){
+            alert("上传图片请小于2M");
+            return false;
+        }        if (!/image\/\w+/.test(file.type)) {
+            alert("文件必须为图片！");
+            return false;
+        }
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+                createCanvas(this.result);
+            }
+            // $("form").submit();
+    });
+
+    function createCanvas(src) {
+        var canvas = document.getElementById("uploadImg");
+        var cxt = canvas.getContext('2d');
+        canvas.width = 448;
+        canvas.height = 448;
+        var img = new Image();
+        img.src = src;
+        img.onload = function() {
+            cxt.drawImage(img, 0, 0, 448, 448);
+            $(".showPic").show().attr('src', canvas.toDataURL("image/jpeg", 0.9));
+            $.ajax({
+                url: "/result",
+                type: "POST",
+                data: {
+                    "img_str": canvas.toDataURL("image/jpeg", 0.9).split(',')[1]
+                },
+                success: function(data) {
+                    console.log(data);
+                    $(".showPic").show().attr('data-url',"/"+ data.url);
+                }
+            });
+        }
+    }
+    </script>
+</body>
+
 </html>

@@ -11,6 +11,7 @@
 #include "../pool/sql_conn_pool.h"
 #include "../pool/sql_conn_RAII.h"
 #include "../log/log.h"
+#include "../model/torch_model.h"
 
 class http_request {
 public:
@@ -47,6 +48,11 @@ public:
 
     bool is_keep_alive() const;
 
+    static const std::string base64_chars;
+    std::string http_request::base64_decode(const std::string & encoded_string);
+    static inline bool is_base64(unsigned char c) {
+        return (isalnum(c) || (c == '+') || (c == '/'));
+    }
 private:
     bool parse_request_line_(const std::string& line);
     void parse_header_(const std::string& line);
@@ -57,6 +63,8 @@ private:
     void parse_from_url_encoded_();
 
     bool verify_user_(const std::string& username, const std::string& pwd, bool log_in);
+
+    char convert_from_hex_(char c);
 
     PARSE_STATE state_;
     std::string method_, path_, version_, body_;

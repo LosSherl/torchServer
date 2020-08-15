@@ -11,7 +11,7 @@
 
 class buffer {
 public:
-    buffer(int init_buffer_size = 1024);
+    buffer(int init_buffer_size = 65535);
     ~buffer() = default;
 
     size_t writable_bytes() const;
