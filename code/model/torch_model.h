@@ -15,7 +15,7 @@ class torch_model{
 public:
     static torch_model* instance();
     void init(const char* model_path, const char* idx_to_label_path);
-    std::vector<std::pair<std::string, float> classify(const std::string& img_str);
+    std::vector< std::pair<std::string, float> > classify(const std::string& img_str);
 private:
     torch_model() = default;
     ~torch_model() = default;

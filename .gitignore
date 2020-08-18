@@ -1,5 +1,6 @@
 /bin
-/.vscode
+/.vscode/*
 /webbench/webbench
 /webbench/webbench.o
 /log/*
+/build

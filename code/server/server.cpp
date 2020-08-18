@@ -1,9 +1,3 @@
-/*
- * @Author       : mark
- * @Date         : 2020-06-17
- * @copyleft Apache 2.0
- */ 
-
 #include "server.h"
 
 using namespace std;

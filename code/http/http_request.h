@@ -49,7 +49,7 @@ public:
     bool is_keep_alive() const;
 
     static const std::string base64_chars;
-    std::string http_request::base64_decode(const std::string & encoded_string);
+    std::string base64_decode(const std::string& encoded_string);
     static inline bool is_base64(unsigned char c) {
         return (isalnum(c) || (c == '+') || (c == '/'));
     }

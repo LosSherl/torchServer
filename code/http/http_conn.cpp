@@ -59,13 +59,16 @@ int http_conn::get_port() const {
 
 ssize_t http_conn::read(int* save_errno) {
     ssize_t len = -1;
+    ssize_t total_len = 0;
     do {
         len = read_buff_.read_fd(fd_, save_errno);
+        LOG_DEBUG("w pos: %d, len: %d, errno: %d", read_buff_.readable_bytes(), len, *save_errno);
         if (len <= 0) {
             break;
         }
+        total_len += len;
     } while (ET);
-    return len;
+    return total_len;
 }
 
 ssize_t http_conn::write(int* save_errno) {

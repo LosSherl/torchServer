@@ -8,7 +8,7 @@ torch_model* torch_model::instance() {
     return &model;
 }
 
-void get_idx_to_label_(const char* idx_to_label_path) {
+void torch_model::get_idx_to_label_(const char* idx_to_label_path) {
     std::vector<std::string> word;
     std::fstream fin(idx_to_label_path);
     std::string json = "";
@@ -32,9 +32,10 @@ void torch_model::init(const char* model_path, const char* idx_to_label_path) {
     get_idx_to_label_(idx_to_label_path);
 }
 
-std::vector<std::pair<std::string, float> classify(const std::string& img_str) {
-    std::vector<std::pair<std::string, float> res;
-    cv::Mat img = cv::imdecode(data, IMREAD_UNCHANGED);
+std::vector<std::pair<std::string, float> > torch_model::classify(const std::string& img_str) {
+    std::vector<std::pair<std::string, float> > res;
+    std::vector<uchar> img_data(img_str.begin(), img_str.end());
+    cv::Mat img = cv::imdecode(img_data, cv::IMREAD_UNCHANGED);
     auto img_tensor = torch::from_blob(img.data, {1, img_height, img_width, 3});
     img_tensor = img_tensor.permute({0, 3, 1, 2});
     img_tensor[0][0] = img_tensor[0][0].sub_(0.485).div_(0.229);

@@ -25,7 +25,7 @@
         event.preventDefault();
         console.log($(this)[0].files);
         var file = $(this)[0].files[0];
-        if(file.size>2097152){
+        if(file.size > 2097152){
             alert("上传图片请小于2M");
             return false;
         }        if (!/image\/\w+/.test(file.type)) {

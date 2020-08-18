@@ -10,7 +10,8 @@ const std::unordered_map<std::string, int> http_request::DEFAULT_HTML_TAG {
             {"/register.html", 0}, {"/login.html", 1},  };
 
 void http_request::init() {
-    method_ = path_ = version_ = body_ = "";
+    method_ = version_ = body_ = "";
+    path_ = "/404.html";
     state_ = REQUEST_LINE;
     header_.clear();
     post_.clear();
@@ -33,26 +34,26 @@ bool http_request::parse(buffer& buff) {
         std::string line(buff.peek(), line_end);
         switch(state_)
         {
-        case REQUEST_LINE:
-            if(!parse_request_line_(line)) {
-                return false;
+            case REQUEST_LINE:
+                if(!parse_request_line_(line)) {
+                    return false;
+                }
+                parse_path_();
+                break;    
+            case HEADERS:
+                parse_header_(line);
+                if(buff.readable_bytes() <= 2) {
+                    state_ = FINISH;
+                }
+                break;
+            case BODY:
+                parse_body_(line);
+                break;
+            default:
+                break;
             }
-            parse_path_();
-            break;    
-        case HEADERS:
-            parse_header_(line);
-            if(buff.readable_bytes() <= 2) {
-                 state_ = FINISH;
-            }
-            break;
-        case BODY:
-            parse_body_(line);
-            break;
-        default:
-            break;
-        }
-        if(line_end == buff.begin_write()) {
-            break; 
+            if(line_end == buff.begin_write()) {
+                break; 
         }
         buff.retrieve_until(line_end + 2);
 
@@ -79,7 +80,7 @@ bool http_request::parse_request_line_(const std::string& line) {
     LOG_DEBUG("%s", line.c_str());
     std::regex patten("^([^ ]*) ([^ ]*) HTTP/([^ ]*)$");
     std::smatch subMatch;
-    if(regex_match(line, subMatch, patten)) {   
+    if(line.length() < 256 && regex_match(line, subMatch, patten)) {   
         method_ = subMatch[1];
         path_ = subMatch[2];
         version_ = subMatch[3];
@@ -136,7 +137,7 @@ void http_request::parse_post_() {
         }
         else if(path_ == "/result.html") {
             std::string img_str = std::move(base64_decode(post_["img_str"]));
-            torch_model::instance()->classify(img_str);
+            // torch_model::instance()->classify(img_str);
         }
     }   
 }
@@ -201,7 +202,7 @@ void http_request::parse_from_url_encoded_() {
     std::string cur = "";
     size_t n = body_.size();
     size_t i = 0;
-
+    char ascii_val;
     for(; i < n; i++) {
         switch (body_[i]) {
             case '=':
@@ -209,7 +210,7 @@ void http_request::parse_from_url_encoded_() {
                 cur = "";
                 break;
             case '%':
-                char ascii_val = convert_from_hex_(body_[i + 1]) * 16;
+                ascii_val = convert_from_hex_(body_[i + 1]) * 16;
                 ascii_val += convert_from_hex_(body_[i + 2]);
                 i += 2;
                 cur += ascii_val;
