@@ -21,10 +21,10 @@ void torch_model::get_idx_to_label_(const char* idx_to_label_path) {
     }
     
     assert(pos.size() % 4 == 0);
-    
+
     idx_to_label_ = std::vector<std::string>(pos.size() / 4);
     for(int i = 0; i < pos.size(); i += 4) {
-        int idx = atoi(json.c_str() + pos[i]);
+        int idx = atoi(json.c_str() + pos[i] + 1);
         idx_to_label_[idx] = json.substr(pos[i + 2] + 1, pos[i + 3] - pos[i + 2] - 1);
     }
 }
@@ -37,7 +37,11 @@ void torch_model::init(const char* model_path, const char* idx_to_label_path) {
 std::vector<std::pair<std::string, float> > torch_model::classify(const std::string& img_str) {
     std::vector<std::pair<std::string, float> > res;
     std::vector<uchar> img_data(img_str.begin(), img_str.end());
+
     cv::Mat img = cv::imdecode(img_data, cv::IMREAD_UNCHANGED);
+    cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+    img.convertTo(img, CV_32FC3, 1.0f / 255.0f);
+
     auto img_tensor = torch::from_blob(img.data, {1, img_height, img_width, 3});
     img_tensor = img_tensor.permute({0, 3, 1, 2});
     img_tensor[0][0] = img_tensor[0][0].sub_(0.485).div_(0.229);

@@ -140,9 +140,6 @@ void http_request::parse_post_() {
             LOG_DEBUG("Classify");
             std::string img_str = std::move(base64_decode(post_["img_str"]));
             cls_prob = torch_model::instance()->classify(img_str);
-            for(int i = 0; i < cls_prob.size(); i++) {
-                std::cout << cls_prob[i].first << " "  << cls_prob[i].second << std::endl;
-            }
         }
     }   
 }
