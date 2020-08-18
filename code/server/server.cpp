@@ -5,9 +5,11 @@ using namespace std;
 server::server(
             int port, int trig_mode, int timeout_ms, bool opt_linger,  int thread_num,
             int sql_port, const char* sql_user, const char* sql_pwd, const char* db_name, int sql_conn_num,
-            bool open_log, int log_level, int log_que_size, const std::string& name):
+            bool open_log, int log_level, int log_que_size, const std::string& name,
+            const char* model_path, const char* idx_to_label_path):
             port_(port), linger_(opt_linger), timeout_ms_(timeout_ms), is_closed_(false), 
-            timer_(new timer_heap()), thread_pool_(new thread_pool(thread_num)), epoller_(new epoller()) {
+            timer_(new timer_heap()), thread_pool_(new thread_pool(thread_num)), epoller_(new epoller()), 
+            model_path_(model_path), idx_to_label_path_(idx_to_label_path) {
     strcpy(name_, name.c_str());
     src_dir_ = getcwd(nullptr, 256);
     total_cnt_ = 0;
@@ -19,6 +21,7 @@ server::server(
     sql_conn_pool::instance()->init("localhost", sql_port, sql_user, sql_pwd, db_name, sql_conn_num);
 
     init_event_mode_(trig_mode);
+    init_torch_model_();
     if(!init_socket_()) { 
         is_closed_ = true;
     }
@@ -276,4 +279,6 @@ int server::set_fd_nonblock(int fd) {
     return fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0) | O_NONBLOCK);
 }
 
-
+void server::init_torch_model_() {
+    torch_model::instance()->init(model_path_, idx_to_label_path_);
+}

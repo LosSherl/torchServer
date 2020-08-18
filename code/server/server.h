@@ -23,13 +23,15 @@ public:
     server(
         int port, int trig_mode, int timeout_ms, bool linger, int thread_num,
             int sql_port, const char* sql_user, const char* sql_pwd, const char* db_name, int sql_conn_num,
-            bool open_log, int log_level, int log_que_size, const std::string& name);
+            bool open_log, int log_level, int log_que_size, const std::string& name,
+            const char* model_path, const char* idx_to_label_path);
 
     ~server();
     void start();
 
 private:
     bool init_socket_(); 
+    void init_torch_model_();
     void init_event_mode_(int trig_mode);
     void add_client_(int fd, sockaddr_in addr);
   
@@ -54,6 +56,8 @@ private:
     bool is_closed_;
     int listen_fd_;
     char* src_dir_;
+    const char* model_path_;
+    const char* idx_to_label_path_;
     
     uint32_t listen_event_;
     uint32_t conn_event_;

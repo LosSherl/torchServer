@@ -53,7 +53,8 @@ std::string http_client::get_request_(const std::string& path) {
 	request += " HTTP/1.0\r\n";
 	request += "Host: " + host_ + "\r\n";
 	request += "User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3\r\n";
-	request += "Connection:close\r\n\r\n";
+	request += "Content-Type: application/x-www-form-urlencoded\r\n";
+	request += "Connection: close\r\n\r\n";
 	request += "img_str=";
     return request + base64_img;
 }

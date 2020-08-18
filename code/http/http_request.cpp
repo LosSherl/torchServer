@@ -120,6 +120,7 @@ std::string http_request::get_post(const std::string& key) const {
 
 
 void http_request::parse_post_() {
+    LOG_DEBUG("%s %s %s", method_.c_str(), header_["Content-Type"].c_str(), path_.c_str());
     if(method_ == "POST" && header_["Content-Type"] == "application/x-www-form-urlencoded") {
         parse_from_url_encoded_();
         if(DEFAULT_HTML_TAG.count(path_)) {
@@ -136,8 +137,12 @@ void http_request::parse_post_() {
             }
         }
         else if(path_ == "/result.html") {
+            LOG_DEBUG("Classify");
             std::string img_str = std::move(base64_decode(post_["img_str"]));
-            // torch_model::instance()->classify(img_str);
+            cls_prob = torch_model::instance()->classify(img_str);
+            for(int i = 0; i < cls_prob.size(); i++) {
+                std::cout << cls_prob[i].first << " "  << cls_prob[i].second << std::endl;
+            }
         }
     }   
 }

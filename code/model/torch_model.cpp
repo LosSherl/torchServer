@@ -13,13 +13,15 @@ void torch_model::get_idx_to_label_(const char* idx_to_label_path) {
     std::fstream fin(idx_to_label_path);
     std::string json = "";
     std::vector<int> pos;
-    fin >> json;
+    getline(fin, json);
     for(int i = 0; i < json.length(); i++) {
         if(json[i] == '"') {
             pos.push_back(i);
         }
     }
+    
     assert(pos.size() % 4 == 0);
+    
     idx_to_label_ = std::vector<std::string>(pos.size() / 4);
     for(int i = 0; i < pos.size(); i += 4) {
         int idx = atoi(json.c_str() + pos[i]);

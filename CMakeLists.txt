@@ -3,7 +3,7 @@ project(torch_server)
 
 set(cmake_install_prefix "../")
 
-# SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_BUILD_TYPE "Debug")
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
 
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/data/cl/libtorch")
