@@ -2,4 +2,4 @@
 
 A light-weight http server written in CPP
 
-Support post image and inferred with torch model 
+Support posting image and inferred with torch model 
