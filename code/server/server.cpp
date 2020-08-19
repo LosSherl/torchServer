@@ -182,8 +182,11 @@ void server::on_read_(http_conn* client) {
         close_conn_(client);
         return;
     }
-    client->process();
-    epoller_->mod_fd(client->get_fd(), conn_event_ | EPOLLOUT);
+    bool done = client->process();
+    if(done)
+        epoller_->mod_fd(client->get_fd(), conn_event_ | EPOLLOUT);
+    else
+        epoller_->mod_fd(client->get_fd(), conn_event_ | EPOLLIN);
 }
  
 void server::on_write_(http_conn* client) {

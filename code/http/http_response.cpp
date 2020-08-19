@@ -48,7 +48,7 @@ http_response::~http_response() {
     unmap_file();
 }
 
-void http_response::init(const std::string& src_dir, std::string& path, bool is_keep_alive, int code){
+void http_response::init(const std::string& src_dir, std::string& path, std::vector<std::pair<std::string, float> >& cls_probs, bool is_keep_alive, int code){
     assert(src_dir != "" && path != "");
     if(mm_file_) { 
         unmap_file(); 
@@ -56,6 +56,7 @@ void http_response::init(const std::string& src_dir, std::string& path, bool is_
     code_ = code;
     is_keep_alive_ = is_keep_alive;
     path_ = path;
+    cls_probs_ = cls_probs;
     src_dir_ = src_dir;
     mm_file_ = nullptr; 
     mm_file_stat_ = { 0 };
@@ -63,7 +64,22 @@ void http_response::init(const std::string& src_dir, std::string& path, bool is_
 
 void http_response::make_response(buffer& buff) {
     /* 判断请求的资源文件 */
-    if(stat((src_dir_ + path_).data(), &mm_file_stat_) < 0 || S_ISDIR(mm_file_stat_.st_mode)) {
+    if(path_ == "/result.html") {
+        add_state_line_(buff);
+        add_header_(buff);
+        std::string json = "{";
+        for(auto& item : cls_probs_) {
+            json += "\"" + item.first + "\" : ";
+            json += std::to_string(item.second);
+            json += ", ";
+        }
+        json.erase(json.length() - 2);
+        json += "}";
+        buff.append("Content-length: " + std::to_string(json.length()) + "\r\n\r\n");
+        buff.append(json);
+        return;
+    }
+    else if(stat((src_dir_ + path_).data(), &mm_file_stat_) < 0 || S_ISDIR(mm_file_stat_.st_mode)) {
         code_ = 404;
     }
     else if(!(mm_file_stat_.st_mode & S_IROTH)) {
@@ -113,7 +129,10 @@ void http_response::add_header_(buffer& buff) {
     } else{
         buff.append("close\r\n");
     }
-    buff.append("Content-type: " + get_file_type_() + "\r\n");
+    if(path_ == "/result.html")
+        buff.append("Content-type: application/json\r\n");
+    else
+        buff.append("Content-type: " + get_file_type_() + "\r\n");
 }
 
 void http_response::add_content_(buffer& buff) {

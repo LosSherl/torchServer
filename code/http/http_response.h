@@ -15,7 +15,7 @@ public:
     http_response();
     ~http_response();
 
-    void init(const std::string& srcDir, std::string& path, bool isKeepAlive = false, int code = -1);
+    void init(const std::string& srcDir, std::string& path, std::vector<std::pair<std::string, float> >& cls_probs, bool isKeepAlive = false, int code = -1);
     void make_response(buffer& buff);
     void unmap_file();
     char* file();
@@ -39,7 +39,7 @@ private:
     
     char* mm_file_; 
     struct stat mm_file_stat_;
-
+    std::vector<std::pair<std::string, float> > cls_probs_;
     static const std::unordered_map<std::string, std::string> SUFFIX_TYPE;
     static const std::unordered_map<int, std::string> CODE_STATUS;
     static const std::unordered_map<int, std::string> CODE_PATH;

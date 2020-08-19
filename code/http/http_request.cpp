@@ -24,10 +24,10 @@ bool http_request::is_keep_alive() const {
     return false;
 }
 
-bool http_request::parse(buffer& buff) {
+int http_request::parse(buffer& buff) {     // 0 for ok, 1 to read, -1 for err
     const char CRLF[] = "\r\n";
     if(buff.readable_bytes() <= 0) {
-        return false;
+        return 1;
     }
     while(buff.readable_bytes() && state_ != FINISH) {
         const char* line_end = std::search(buff.peek(), buff.begin_write_const(), CRLF, CRLF + 2);
@@ -36,7 +36,7 @@ bool http_request::parse(buffer& buff) {
         {
             case REQUEST_LINE:
                 if(!parse_request_line_(line)) {
-                    return false;
+                    return -1;
                 }
                 parse_path_();
                 break;    
@@ -47,7 +47,10 @@ bool http_request::parse(buffer& buff) {
                 }
                 break;
             case BODY:
-                parse_body_(line);
+                if(!parse_body_(line)) {
+                    buff.retrieve_until(line_end);
+                    return 1;
+                }
                 break;
             default:
                 break;
@@ -59,7 +62,7 @@ bool http_request::parse(buffer& buff) {
 
     }
     LOG_DEBUG("[%s], [%s], [%s]", method_.c_str(), path_.c_str(), version_.c_str());
-    return true;
+    return 0;
 }
 
 void http_request::parse_path_() {
@@ -102,11 +105,19 @@ void http_request::parse_header_(const std::string& line) {
     }
 }
 
-void http_request::parse_body_(const std::string& line) {
-    body_ = line;
+bool http_request::parse_body_(const std::string& line) {
+    if(header_["Content-Length"].length() <= 0)
+        return true;
+    int content_len = atoi(header_["Content-Length"].c_str());
+    body_ += line;
+    // LOG_DEBUG("Content len: %d, Body len:%d", content_len, body_.length());
+    // LOG_DEBUG("body_: %s", body_.c_str());
+    if(body_.length() < content_len)
+        return false;
     parse_post_();
     state_ = FINISH;
-    LOG_DEBUG("Body:%s, len:%d", line.c_str(), line.size());
+    LOG_DEBUG("Body:%s, len:%d", body_.c_str(), body_.length());
+    return true;
 }
 
 
@@ -120,8 +131,8 @@ std::string http_request::get_post(const std::string& key) const {
 
 
 void http_request::parse_post_() {
-    LOG_DEBUG("%s %s %s", method_.c_str(), header_["Content-Type"].c_str(), path_.c_str());
-    if(method_ == "POST" && header_["Content-Type"] == "application/x-www-form-urlencoded") {
+    // LOG_DEBUG("%s %s %s", method_.c_str(), header_["Content-Type"].c_str(), path_.c_str());
+    if(method_ == "POST" && header_["Content-Type"].find("application/x-www-form-urlencoded") != std::string::npos) {
         parse_from_url_encoded_();
         if(DEFAULT_HTML_TAG.count(path_)) {
             int tag = DEFAULT_HTML_TAG.find(path_)->second;
@@ -139,7 +150,11 @@ void http_request::parse_post_() {
         else if(path_ == "/result.html") {
             LOG_DEBUG("Classify");
             std::string img_str = std::move(base64_decode(post_["img_str"]));
-            cls_prob = torch_model::instance()->classify(img_str);
+            cls_probs_ = torch_model::instance()->classify(img_str);
+            for(auto& item : cls_probs_) {
+                LOG_DEBUG("label: %s, prob: %f", item.first.c_str(), item.second);
+            }
+            
         }
     }   
 }

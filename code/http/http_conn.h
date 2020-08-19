@@ -30,7 +30,7 @@ public:
     const char* get_ip() const;
     sockaddr_in get_addr() const;
     
-    void process();
+    bool process();
     int bytes_to_write() { 
         return iov_[0].iov_len + iov_[1].iov_len; 
     }

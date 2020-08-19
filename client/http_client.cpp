@@ -49,6 +49,7 @@ std::string http_client::get_request_(const std::string& path) {
 	std::fstream f("base64_url_img.txt");
 	std::string base64_img;
 	f >> base64_img;
+	// std::cout << base64_img.length() << std::endl;
 	request += "POST " + path;
 	request += " HTTP/1.0\r\n";
 	request += "Host: " + host_ + "\r\n";

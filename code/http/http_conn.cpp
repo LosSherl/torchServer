@@ -62,7 +62,7 @@ ssize_t http_conn::read(int* save_errno) {
     ssize_t total_len = 0;
     do {
         len = read_buff_.read_fd(fd_, save_errno);
-        LOG_DEBUG("w pos: %d, len: %d, errno: %d", read_buff_.readable_bytes(), len, *save_errno);
+        // LOG_DEBUG("w pos: %d, len: %d, errno: %d", read_buff_.readable_bytes(), len, *save_errno);
         if (len <= 0) {
             break;
         }
@@ -100,13 +100,16 @@ ssize_t http_conn::write(int* save_errno) {
     return len;
 }
 
-void http_conn::process() {
-    if(request_.parse(read_buff_)) {
+bool http_conn::process() {
+    int parse_ret = request_.parse(read_buff_);
+    if(parse_ret == 1)
+        return false;
+    if(parse_ret == 0) {
         LOG_DEBUG("%s", request_.path().c_str());
-        response_.init(src_dir, request_.path(), request_.is_keep_alive(), 200);
+        response_.init(src_dir, request_.path(), request_.get_cls_result(), request_.is_keep_alive(), 200);
     } 
     else {
-        response_.init(src_dir, request_.path(), false, 400);
+        response_.init(src_dir, request_.path(), request_.get_cls_result());
     }
     response_.make_response(write_buff_);
     /* 响应头 */
@@ -121,4 +124,5 @@ void http_conn::process() {
         iov_cnt_ = 2;
     } 
     LOG_DEBUG("filesize:%d, %d  to %d", response_.file_len() , iov_cnt_, bytes_to_write());
+    return true;
 }

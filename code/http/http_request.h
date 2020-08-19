@@ -37,13 +37,14 @@ public:
     ~http_request() = default;
 
     void init();
-    bool parse(buffer& buff);
+    int parse(buffer& buff);
 
     std::string path() const;
     std::string& path();
     std::string method() const;
     std::string version() const;
     std::string get_post(const std::string& key) const;
+    std::vector<std::pair<std::string, float> >& get_cls_result() {  return cls_probs_; }
     // std::string get_Post(const char* key);
 
     bool is_keep_alive() const;
@@ -56,7 +57,7 @@ public:
 private:
     bool parse_request_line_(const std::string& line);
     void parse_header_(const std::string& line);
-    void parse_body_(const std::string& line);
+    bool parse_body_(const std::string& line);
 
     void parse_path_();
     void parse_post_();
@@ -70,7 +71,7 @@ private:
     std::string method_, path_, version_, body_;
     std::unordered_map<std::string, std::string> header_;
     std::unordered_map<std::string, std::string> post_;
-    std::vector<std::pair<std::string, float> > cls_prob;
+    std::vector<std::pair<std::string, float> > cls_probs_;
 
     static const std::unordered_set<std::string> DEFAULT_HTML;
     static const std::unordered_map<std::string, int> DEFAULT_HTML_TAG;
