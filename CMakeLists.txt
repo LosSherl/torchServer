@@ -4,9 +4,9 @@ project(torch_server)
 set(cmake_install_prefix "../")
 
 SET(CMAKE_BUILD_TYPE "Debug")
-SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O2 -Wall -g")
 
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/data/cl/libtorch")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/home/hw/libtorch")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(MySQL REQUIRED)
 

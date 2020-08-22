@@ -11,7 +11,7 @@ void timer_heap::swap_node_(size_t i, size_t j) {
 void timer_heap::sift_up_(size_t i) {
     assert(i >= 0 && i < heap_.size());
     size_t j = (i - 1) / 2;
-    while(j >= 0) {
+    while(j >= 0 && j < heap_.size()) {
         if(heap_[j] < heap_[i]) { 
             break; 
         }

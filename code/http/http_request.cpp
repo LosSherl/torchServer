@@ -110,7 +110,7 @@ bool http_request::parse_body_(const std::string& line) {
         return true;
     int content_len = atoi(header_["Content-Length"].c_str());
     body_ += line;
-    // LOG_DEBUG("Content len: %d, Body len:%d", content_len, body_.length());
+    LOG_DEBUG("Content len: %d, Body len:%d", content_len, body_.length());
     // LOG_DEBUG("body_: %s", body_.c_str());
     if(body_.length() < content_len)
         return false;
